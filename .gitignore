@@ -8,3 +8,19 @@ wheels/
 
 # Virtual environments
 .venv
+# Virtual environments
+.venv/
+venv/
+.env/
+
+# Git internals (already there but explicit)
+.git/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/settings.json
+.idea/

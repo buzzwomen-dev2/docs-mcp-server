@@ -4,4 +4,18 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "markdownify>=1.2.2",
+    "mcp[cli]>=1.23.1",
+    "whoosh>=2.7.4",
+]
+
+[dependency-groups]
+dev = [
+    "beautifulsoup4>=4.14.3",
+    "httpx>=0.28.1",
+    "markdownify>=1.2.2",
+    "mcp[cli]>=1.23.1",
+    "whoosh>=2.7.4",
+]

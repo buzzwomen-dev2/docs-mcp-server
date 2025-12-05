@@ -1,0 +1,16 @@
+# File handling
+
+* [The `File` object](file.md)
+  * [The `File` class](file.md#the-file-class)
+  * [The `ContentFile` class](file.md#the-contentfile-class)
+  * [The `ImageFile` class](file.md#the-imagefile-class)
+  * [Additional methods on files attached to objects](file.md#additional-methods-on-files-attached-to-objects)
+* [File storage API](storage.md)
+  * [Getting the default storage class](storage.md#getting-the-default-storage-class)
+  * [The `FileSystemStorage` class](storage.md#the-filesystemstorage-class)
+  * [The `InMemoryStorage` class](storage.md#the-inmemorystorage-class)
+  * [The `Storage` class](storage.md#the-storage-class)
+* [Uploaded Files and Upload Handlers](uploads.md)
+  * [Uploaded files](uploads.md#uploaded-files)
+  * [Built-in upload handlers](uploads.md#module-django.core.files.uploadhandler)
+  * [Writing custom upload handlers](uploads.md#writing-custom-upload-handlers)

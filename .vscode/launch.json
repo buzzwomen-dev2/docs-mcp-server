@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug MCP Server with uv",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "server",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": false,
+      "python": "${workspaceFolder}/.venv/bin/python"
+    },
+    {
+      "name": "MCP Inspector",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "mcp.client.stdio",
+      "args": [
+        "uv",
+        "run",
+        "server.py"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

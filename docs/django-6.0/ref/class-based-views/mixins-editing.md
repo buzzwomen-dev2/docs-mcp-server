@@ -1,0 +1,236 @@
+# Editing mixins
+
+The following mixins are used to construct Django’s editing views:
+
+* [`django.views.generic.edit.FormMixin`](#django.views.generic.edit.FormMixin)
+* [`django.views.generic.edit.ModelFormMixin`](#django.views.generic.edit.ModelFormMixin)
+* [`django.views.generic.edit.ProcessFormView`](#django.views.generic.edit.ProcessFormView)
+* [`django.views.generic.edit.DeletionMixin`](#django.views.generic.edit.DeletionMixin)
+
+#### NOTE
+Examples of how these are combined into editing views can be found at
+the documentation on [Generic editing views](generic-editing.md).
+
+## `FormMixin`
+
+#### *class* django.views.generic.edit.FormMixin
+
+A mixin class that provides facilities for creating and displaying forms.
+
+**Mixins**
+
+* [`django.views.generic.base.ContextMixin`](mixins-simple.md#django.views.generic.base.ContextMixin)
+
+**Methods and Attributes**
+
+#### initial
+
+A dictionary containing initial data for the form.
+
+#### form_class
+
+The form class to instantiate.
+
+#### success_url
+
+The URL to redirect to when the form is successfully processed.
+
+#### prefix
+
+The [`prefix`](../forms/api.md#django.forms.Form.prefix) for the generated form.
+
+#### get_initial()
+
+Retrieve initial data for the form. By default, returns a copy of
+[`initial`](#django.views.generic.edit.FormMixin.initial).
+
+#### get_form_class()
+
+Retrieve the form class to instantiate. By default
+[`form_class`](#django.views.generic.edit.FormMixin.form_class).
+
+#### get_form(form_class=None)
+
+Instantiate an instance of `form_class` using
+[`get_form_kwargs()`](#django.views.generic.edit.FormMixin.get_form_kwargs).
+If `form_class` isn’t provided [`get_form_class()`](#django.views.generic.edit.FormMixin.get_form_class) will be used.
+
+#### get_form_kwargs()
+
+Build the keyword arguments required to instantiate the form.
+
+The `initial` argument is set to [`get_initial()`](#django.views.generic.edit.FormMixin.get_initial). If the
+request is a `POST` or `PUT`, the request data (`request.POST`
+and `request.FILES`) will also be provided.
+
+#### get_prefix()
+
+Determine the [`prefix`](../forms/api.md#django.forms.Form.prefix) for the generated form.
+Returns [`prefix`](#django.views.generic.edit.FormMixin.prefix) by default.
+
+#### get_success_url()
+
+Determine the URL to redirect to when the form is successfully
+validated. Returns
+[`success_url`](#django.views.generic.edit.FormMixin.success_url) by default.
+
+#### form_valid(form)
+
+Redirects to
+[`get_success_url()`](#django.views.generic.edit.FormMixin.get_success_url).
+
+#### form_invalid(form)
+
+Renders a response, providing the invalid form as context.
+
+#### get_context_data(\*\*kwargs)
+
+Calls [`get_form()`](#django.views.generic.edit.FormMixin.get_form) and adds the result to the context data with the
+name ‘form’.
+
+## `ModelFormMixin`
+
+#### *class* django.views.generic.edit.ModelFormMixin
+
+A form mixin that provides facilities for working with a `ModelForm`,
+rather than a standalone form.
+
+Since this is a subclass of
+[`SingleObjectMixin`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin), instances of this
+mixin have access to the
+[`model`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin.model) and
+[`queryset`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin.queryset) attributes,
+describing the type of object that the `ModelForm` is manipulating.
+
+If you specify both the
+[`fields`](#django.views.generic.edit.ModelFormMixin.fields) and
+[`form_class`](#django.views.generic.edit.FormMixin.form_class) attributes, an
+[`ImproperlyConfigured`](../exceptions.md#django.core.exceptions.ImproperlyConfigured) exception will be
+raised.
+
+**Mixins**
+
+* [`django.views.generic.edit.FormMixin`](#django.views.generic.edit.FormMixin)
+* [`django.views.generic.detail.SingleObjectMixin`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin)
+
+**Methods and Attributes**
+
+#### model
+
+A model class. Can be explicitly provided, otherwise will be determined
+by examining `self.object` or
+[`queryset`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin.queryset).
+
+#### fields
+
+A list of names of fields. This is interpreted the same way as the
+`Meta.fields` attribute of [`ModelForm`](../../topics/forms/modelforms.md#django.forms.ModelForm).
+
+This is a required attribute if you are generating the form class
+automatically (e.g. using `model`). Omitting this attribute will
+result in an [`ImproperlyConfigured`](../exceptions.md#django.core.exceptions.ImproperlyConfigured)
+exception.
+
+#### success_url
+
+The URL to redirect to when the form is successfully processed.
+
+`success_url` may contain dictionary string formatting, which
+will be interpolated against the object’s field attributes. For
+example, you could use `success_url="/polls/{slug}/"` to
+redirect to a URL composed out of the `slug` field on a model.
+
+#### get_form_class()
+
+Retrieve the form class to instantiate. If
+[`form_class`](#django.views.generic.edit.FormMixin.form_class) is provided,
+that class will be used. Otherwise, a `ModelForm` will be
+instantiated using the model associated with the
+[`queryset`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin.queryset), or
+with the [`model`](mixins-single-object.md#django.views.generic.detail.SingleObjectMixin.model),
+depending on which attribute is provided.
+
+#### get_form_kwargs()
+
+Add the current instance (`self.object`) to the standard
+[`get_form_kwargs()`](#django.views.generic.edit.FormMixin.get_form_kwargs).
+
+#### get_success_url()
+
+Determine the URL to redirect to when the form is successfully
+validated. Returns
+[`django.views.generic.edit.ModelFormMixin.success_url`](#django.views.generic.edit.ModelFormMixin.success_url) if it is
+provided; otherwise, attempts to use the `get_absolute_url()` of the
+object.
+
+#### form_valid(form)
+
+Saves the form instance, sets the current object for the view, and
+redirects to
+[`get_success_url()`](#django.views.generic.edit.FormMixin.get_success_url).
+
+#### form_invalid(form)
+
+Renders a response, providing the invalid form as context.
+
+## `ProcessFormView`
+
+#### *class* django.views.generic.edit.ProcessFormView
+
+A mixin that provides basic HTTP GET and POST workflow.
+
+#### NOTE
+This is named ‘ProcessFormView’ and inherits directly from
+[`django.views.generic.base.View`](base.md#django.views.generic.base.View), but breaks if used
+independently, so it is more of a mixin.
+
+**Extends**
+
+* [`django.views.generic.base.View`](base.md#django.views.generic.base.View)
+
+**Methods and Attributes**
+
+#### get(request, \*args, \*\*kwargs)
+
+Renders a response using a context created with
+[`get_context_data()`](#django.views.generic.edit.FormMixin.get_context_data).
+
+#### post(request, \*args, \*\*kwargs)
+
+Constructs a form, checks the form for validity, and handles it
+accordingly.
+
+#### put(\*args, \*\*kwargs)
+
+The `PUT` action is also handled and passes all parameters through to
+[`post()`](#django.views.generic.edit.ProcessFormView.post).
+
+## `DeletionMixin`
+
+#### *class* django.views.generic.edit.DeletionMixin
+
+Enables handling of the `DELETE` HTTP action.
+
+**Methods and Attributes**
+
+#### success_url
+
+The url to redirect to when the nominated object has been
+successfully deleted.
+
+`success_url` may contain dictionary string formatting, which will be
+interpolated against the object’s field attributes. For example, you
+could use `success_url="/parent/{parent_id}/"` to redirect to a URL
+composed out of the `parent_id` field on a model.
+
+#### delete(request, \*args, \*\*kwargs)
+
+Retrieves the target object and calls its `delete()` method, then
+redirects to the success URL.
+
+#### get_success_url()
+
+Returns the url to redirect to when the nominated object has been
+successfully deleted. Returns
+[`success_url`](#django.views.generic.edit.DeletionMixin.success_url) by
+default.
