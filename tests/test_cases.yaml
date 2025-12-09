@@ -1,0 +1,286 @@
+# MCP Server Accuracy Test Cases
+# Each test case validates search accuracy for common development queries
+
+test_cases:
+  # Django ORM Queries
+  - query: "Django ORM transactions and atomic operations"
+    description: "Test Django database transaction handling"
+    expected_keywords: ["transaction", "atomic", "database"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "How to define Django model relationships and foreign keys"
+    description: "Test Django model relationship documentation"
+    expected_keywords: ["ForeignKey", "relationship", "model"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "Django queryset filter and exclude methods"
+    description: "Test Django queryset filtering"
+    expected_keywords: ["filter", "exclude", "queryset"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "Django model field types and options"
+    description: "Test Django field documentation"
+    expected_keywords: ["field", "CharField", "IntegerField"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "Django migrations create and apply"
+    description: "Test Django migrations documentation"
+    expected_keywords: ["migration", "makemigrations", "migrate"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  # Django Authentication
+  - query: "Django authentication middleware and login"
+    description: "Test Django auth system"
+    expected_keywords: ["authentication", "login", "middleware"]
+    expected_tech: "django"
+    min_score: 0.6
+    top_k: 10
+
+  - query: "Django user permissions and authorization"
+    description: "Test Django permissions system"
+    expected_keywords: ["permission", "authorization", "user"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "Django password hashing and validation"
+    description: "Test Django password security"
+    expected_keywords: ["password", "hash", "validation"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "Django session management and cookies"
+    description: "Test Django session handling"
+    expected_keywords: ["session", "cookie"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "Django custom user model creation"
+    description: "Test custom user model docs"
+    expected_keywords: ["user", "model", "custom"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  # DRF Serializers
+  - query: "DRF serializer validation and custom validators"
+    description: "Test DRF validation system"
+    expected_keywords: ["serializer", "validation", "validator"]
+    expected_tech: "drf"
+    min_score: 0.6
+    top_k: 10
+
+  - query: "DRF ModelSerializer fields and relations"
+    description: "Test DRF model serializer"
+    expected_keywords: ["ModelSerializer", "field", "relation"]
+    expected_tech: "drf"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "DRF nested serializers and writable nested representations"
+    description: "Test DRF nested serialization"
+    expected_keywords: ["nested", "serializer", "writable"]
+    expected_tech: "drf"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "DRF serializer read_only and write_only fields"
+    description: "Test DRF field options"
+    expected_keywords: ["read_only", "write_only", "field"]
+    expected_tech: "drf"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "DRF serializer context and instance"
+    description: "Test DRF serializer context"
+    expected_keywords: ["context", "serializer", "instance"]
+    expected_tech: "drf"
+    min_score: 0.4
+    top_k: 10
+
+  # DRF ViewSets
+  - query: "DRF ViewSet and Router configuration"
+    description: "Test DRF viewset routing"
+    expected_keywords: ["ViewSet", "router", "URL"]
+    expected_tech: "drf"
+    min_score: 0.6
+    top_k: 10
+
+  - query: "DRF permission classes and authentication"
+    description: "Test DRF permissions"
+    expected_keywords: ["permission", "authentication", "class"]
+    expected_tech: "drf"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "DRF pagination classes and settings"
+    description: "Test DRF pagination"
+    expected_keywords: ["pagination", "page", "limit"]
+    expected_tech: "drf"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "DRF filtering and search backends"
+    description: "Test DRF filtering system"
+    expected_keywords: ["filter", "search", "backend"]
+    expected_tech: "drf"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "DRF action decorator and custom endpoints"
+    description: "Test DRF custom actions"
+    expected_keywords: ["action", "decorator", "endpoint"]
+    expected_tech: "drf"
+    min_score: 0.4
+    top_k: 10
+
+  # Psycopg Connections
+  - query: "psycopg connection parameters and DSN"
+    description: "Test psycopg connection setup"
+    expected_keywords: ["connection", "DSN", "parameter"]
+    expected_tech: "psycopg"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "psycopg connection pool configuration"
+    description: "Test psycopg pooling"
+    expected_keywords: ["pool", "connection"]
+    expected_tech: "psycopg"
+    min_score: 0.6
+    top_k: 10
+
+  - query: "psycopg transaction management and commit"
+    description: "Test psycopg transactions"
+    expected_keywords: ["transaction", "commit", "rollback"]
+    expected_tech: "psycopg"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "psycopg cursor types and usage"
+    description: "Test psycopg cursor documentation"
+    expected_keywords: ["cursor"]
+    expected_tech: "psycopg"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "psycopg connection context manager"
+    description: "Test psycopg context managers"
+    expected_keywords: ["context", "with", "connection"]
+    expected_tech: "psycopg"
+    min_score: 0.4
+    top_k: 10
+
+  # Psycopg Async
+  - query: "psycopg async connection and await"
+    description: "Test psycopg async API"
+    expected_keywords: ["async", "await", "connection"]
+    expected_tech: "psycopg"
+    min_score: 0.6
+    top_k: 10
+
+  - query: "psycopg AsyncConnection and AsyncCursor"
+    description: "Test psycopg async classes"
+    expected_keywords: ["AsyncConnection", "AsyncCursor"]
+    expected_tech: "psycopg"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "psycopg async pool usage"
+    description: "Test psycopg async pooling"
+    expected_keywords: ["async", "pool"]
+    expected_tech: "psycopg"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "psycopg server-side cursors"
+    description: "Test psycopg server cursors"
+    expected_keywords: ["server", "cursor", "side"]
+    expected_tech: "psycopg"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "psycopg copy operations and bulk insert"
+    description: "Test psycopg copy functionality"
+    expected_keywords: ["copy"]
+    expected_tech: "psycopg"
+    min_score: 0.4
+    top_k: 10
+
+  # Cross-tech queries (no tech filter)
+  - query: "database connection pooling best practices"
+    description: "Test cross-tech search"
+    expected_keywords: ["pool", "connection", "database"]
+    min_score: 0.4
+    top_k: 10
+
+  - query: "REST API authentication methods"
+    description: "Test API auth across frameworks"
+    expected_keywords: ["authentication", "API"]
+    min_score: 0.4
+    top_k: 10
+
+  - query: "ORM query optimization techniques"
+    description: "Test ORM optimization search"
+    expected_keywords: ["query", "optimization", "ORM"]
+    min_score: 0.3
+    top_k: 10
+
+  - query: "middleware execution order"
+    description: "Test middleware documentation"
+    expected_keywords: ["middleware", "order"]
+    min_score: 0.4
+    top_k: 10
+
+  - query: "serialization and data validation"
+    description: "Test serialization concepts"
+    expected_keywords: ["serialization", "validation", "data"]
+    min_score: 0.3
+    top_k: 10
+
+  # Edge cases and specific queries
+  - query: "get_or_create"
+    description: "Test exact method name search"
+    expected_keywords: ["get_or_create"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "CharField max_length"
+    description: "Test specific field parameter"
+    expected_keywords: ["CharField", "max_length"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "APIView vs ViewSet"
+    description: "Test comparison query"
+    expected_keywords: ["ViewSet"]
+    expected_tech: "drf"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "execute vs executemany"
+    description: "Test method comparison"
+    expected_keywords: ["execute", "executemany"]
+    expected_tech: "psycopg"
+    min_score: 0.3
+    top_k: 10
+
+  - query: "what is select_related"
+    description: "Test natural language query"
+    expected_keywords: ["select_related", "query"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp.json",
+  "servers": {
+    "docsSearch": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "server.py"
+      ],
+      "cwd": "/absolute/path/to/docs-mcp-server",
+      "env": {
+        "INDEX_DIR": ".index",
+        "EMBEDDING_MODEL": "BAAI/bge-small-en-v1.5",
+        "BM25_WEIGHT": "0.6",
+        "SEMANTIC_WEIGHT": "0.4",
+        "CHUNK_SIZE_TOKENS": "300",
+        "CODE_CHUNK_LINES": "100",
+        "CHUNK_OVERLAP_WORDS": "50",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}

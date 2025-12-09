@@ -24,3 +24,7 @@ __pycache__/
 # IDE
 .vscode/settings.json
 .idea/
+
+# Search indices and logs
+.index/
+*.log
