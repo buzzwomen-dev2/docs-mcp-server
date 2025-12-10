@@ -10,6 +10,7 @@ import subprocess
 import sys
 import json
 from pathlib import Path
+from typing import Optional
 from datetime import datetime
 
 
@@ -26,7 +27,7 @@ class TestRunner:
         }
         self.tests_dir = Path(__file__).parent
     
-    def run_command(self, script_name: str, args: list = None) -> dict:
+    def run_command(self, script_name: str, args: Optional[list] = None) -> dict:
         """Run a test script and capture results."""
         cmd = ["python", str(self.tests_dir / script_name)]
         if args:
@@ -82,19 +83,43 @@ class TestRunner:
     def run_all_tests(self):
         """Run all test suites."""
         print("=" * 70)
-        print("MCP SERVER TEST SUITE")
+        print("MCP SERVER COMPREHENSIVE TEST SUITE")
         print("=" * 70)
         print(f"Started at: {self.results['timestamp']}\n")
         
-        # 1. Accuracy Tests
-        print("\n📋 RUNNING ACCURACY TESTS...\n")
+        # 1. Core Functionality Tests
+        print("\n🔧 RUNNING CORE FUNCTIONALITY TESTS...\n")
+        core_result = self.run_command("test_search_engine.py")
+        self.results["core"] = {
+            "success": core_result["success"],
+            "returncode": core_result["returncode"]
+        }
+        
+        # 2. Score Accuracy Tests
+        print("\n📊 RUNNING SCORE ACCURACY TESTS...\n")
+        score_result = self.run_command("test_score_accuracy.py")
+        self.results["scores"] = {
+            "success": score_result["success"],
+            "returncode": score_result["returncode"]
+        }
+        
+        # 3. Integration Tests
+        print("\n🔗 RUNNING INTEGRATION TESTS...\n")
+        integration_result = self.run_command("test_integration.py")
+        self.results["integration"] = {
+            "success": integration_result["success"],
+            "returncode": integration_result["returncode"]
+        }
+        
+        # 4. Query Accuracy Tests
+        print("\n📋 RUNNING QUERY ACCURACY TESTS...\n")
         accuracy_result = self.run_command("test_mcp_accuracy.py")
         self.results["accuracy"] = {
             "success": accuracy_result["success"],
             "details": self.parse_accuracy_results(accuracy_result.get("stdout", ""))
         }
         
-        # 2. Performance Benchmark
+        # 5. Performance Benchmark
         print("\n⚡ RUNNING PERFORMANCE BENCHMARK...\n")
         perf_output = self.tests_dir / "benchmark_results.json"
         perf_result = self.run_command(

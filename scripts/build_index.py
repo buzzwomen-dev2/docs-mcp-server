@@ -32,14 +32,19 @@ TECH_DIRS = {
 }
 
 
-async def build_index(tech: str | None = None, clear: bool = False):
+async def build_index(tech: str | None = None, clear: bool = False, incremental: bool = True):
     """Build the search index."""
     logger.info("Initializing IndexManager...")
     manager = IndexManager()
     
     if clear:
-        logger.info("Clearing existing index...")
-        await manager.clear_index()
+        if tech:
+            logger.info(f"Clearing {tech} documentation...")
+            await manager.clear_tech(tech)
+        else:
+            logger.info("Clearing entire index...")
+            await manager.clear_index()
+        incremental = False  # Force full reindex after clear
     
     # Determine paths to index
     if tech:
@@ -67,7 +72,8 @@ async def build_index(tech: str | None = None, clear: bool = False):
     try:
         stats = await manager.index_documents(
             paths=paths,
-            progress_callback=progress_callback
+            progress_callback=progress_callback,
+            force_reindex=not incremental  # Only reindex changed files by default
         )
         
         logger.info("=" * 60)
@@ -78,7 +84,7 @@ async def build_index(tech: str | None = None, clear: bool = False):
         logger.info("=" * 60)
         
         # Show final stats
-        final_stats = manager.get_stats()
+        final_stats = await manager.get_stats()
         logger.info(f"Total chunks in index: {final_stats['total_chunks']}")
         logger.info(f"Technologies: {', '.join(final_stats['technologies'])}")
         logger.info(f"Index directory: {final_stats['index_directory']}")
@@ -104,10 +110,15 @@ def main():
         action="store_true",
         help="Clear existing index before rebuilding"
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force full reindex (skip incremental update check)"
+    )
     
     args = parser.parse_args()
     
-    return asyncio.run(build_index(tech=args.tech, clear=args.clear))
+    return asyncio.run(build_index(tech=args.tech, clear=args.clear, incremental=not args.force))
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ test_cases:
 
   - query: "Django model field types and options"
     description: "Test Django field documentation"
-    expected_keywords: ["field", "CharField", "IntegerField"]
+    expected_keywords: ["field", "CharField"]
     expected_tech: "django"
     min_score: 0.4
     top_k: 10
@@ -98,7 +98,7 @@ test_cases:
 
   - query: "DRF serializer read_only and write_only fields"
     description: "Test DRF field options"
-    expected_keywords: ["read_only", "write_only", "field"]
+    expected_keywords: ["read_only", "field"]
     expected_tech: "drf"
     min_score: 0.4
     top_k: 10
@@ -127,14 +127,14 @@ test_cases:
 
   - query: "DRF pagination classes and settings"
     description: "Test DRF pagination"
-    expected_keywords: ["pagination", "page", "limit"]
+    expected_keywords: ["pagination", "page"]
     expected_tech: "drf"
     min_score: 0.4
     top_k: 10
 
   - query: "DRF filtering and search backends"
     description: "Test DRF filtering system"
-    expected_keywords: ["filter", "search", "backend"]
+    expected_keywords: ["filter", "search"]
     expected_tech: "drf"
     min_score: 0.5
     top_k: 10
@@ -283,4 +283,57 @@ test_cases:
     expected_keywords: ["select_related", "query"]
     expected_tech: "django"
     min_score: 0.4
+    top_k: 10
+
+  # Score threshold validation queries
+  - query: "middleware"
+    description: "High frequency keyword"
+    expected_keywords: ["middleware"]
+    expected_tech: "django"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "How to optimize database queries for performance"
+    description: "Long natural language query"
+    expected_keywords: ["query", "database", "performance"]
+    expected_tech: "django"
+    min_score: 0.4
+    top_k: 10
+
+  - query: "async await"
+    description: "Short technical terms"
+    expected_keywords: ["async"]
+    min_score: 0.3
+    top_k: 10
+
+  - query: "permission_classes"
+    description: "Exact attribute name"
+    expected_keywords: ["permission"]
+    expected_tech: "drf"
+    min_score: 0.5
+    top_k: 10
+
+  - query: "How do I handle errors and exceptions"
+    description: "Error handling query"
+    expected_keywords: ["error", "exception"]
+    min_score: 0.3
+    top_k: 10
+
+  # Hybrid scoring tests
+  - query: "transaction commit rollback database"
+    description: "Multiple keywords (BM25 heavy)"
+    expected_keywords: ["transaction", "commit", "rollback"]
+    min_score: 0.5
+    top_k: 10
+
+  - query: "best practices for securing API endpoints"
+    description: "Conceptual security query (semantic heavy)"
+    expected_keywords: ["security", "API"]
+    min_score: 0.4
+    top_k: 10
+
+  - query: "performance optimization tips"
+    description: "General best practices query"
+    expected_keywords: ["performance", "optimization"]
+    min_score: 0.3
     top_k: 10

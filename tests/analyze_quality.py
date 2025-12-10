@@ -9,6 +9,7 @@ import asyncio
 import sys
 from pathlib import Path
 from collections import defaultdict
+from typing import Optional
 import argparse
 import json
 import math
@@ -30,7 +31,7 @@ class QualityAnalyzer:
         self,
         query: str,
         expected_keywords: list,
-        tech: str = None,
+        tech: Optional[str] = None,
         k: int = 5
     ) -> float:
         """Calculate Precision@K."""
@@ -59,7 +60,7 @@ class QualityAnalyzer:
         self,
         query: str,
         expected_keywords: list,
-        tech: str = None,
+        tech: Optional[str] = None,
         top_k: int = 10
     ) -> float:
         """Calculate Mean Reciprocal Rank."""
@@ -87,7 +88,7 @@ class QualityAnalyzer:
         self,
         query: str,
         expected_keywords: list,
-        tech: str = None,
+        tech: Optional[str] = None,
         k: int = 10
     ) -> float:
         """Calculate Normalized Discounted Cumulative Gain@K."""

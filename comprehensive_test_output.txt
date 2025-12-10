@@ -1,0 +1,563 @@
+======================================================================
+COMPREHENSIVE MCP SERVER TEST SUITE
+======================================================================
+Started at: 2025-12-10T15:35:27.469108
+======================================================================
+
+======================================================================
+RUNNING: Core Functionality Tests
+======================================================================
+
+======================================================================
+COMPREHENSIVE SEARCH ENGINE TESTS
+======================================================================
+
+
+Running test_basic_search...
+✓ Basic search returned 5 results
+  Top result: Using the Django authentication system (score: 1.484)
+
+Running test_bm25_search_not_zero...
+✓ BM25 search working - top BM25 score: 0.973
+
+Running test_component_filter...
+✓ Component filter returned 5 results
+
+Running test_cross_tech_search...
+✓ Cross-tech search found results from: django, psycopg
+
+Running test_empty_query...
+✓ Empty query handled gracefully
+
+Running test_exact_method_name_search...
+✓ Exact method name searches working
+
+Running test_get_stats...
+✓ Index stats retrieved: 29026 total chunks
+  Technologies: psycopg, django, drf
+
+Running test_hybrid_scoring...
+✓ Hybrid scoring working correctly
+  BM25: 0.893, Semantic: 0.976
+  Hybrid: 1.131
+
+Running test_initialization...
+✓ IndexManager initialized successfully
+
+Running test_list_sources...
+✓ Listed 737 source files
+
+Running test_long_query...
+✓ Long query handled
+
+Running test_natural_language_query...
+✓ Natural language queries working
+
+Running test_results_sorted_by_score...
+✓ Results properly sorted by score
+
+Running test_retrieve_chunk...
+✓ Successfully retrieved chunk: docs_django-6_0_releases_0_96_md_2_69b7c04ae10d
+
+Running test_score_ranges...
+✓ All scores in valid range [0, 1]
+
+Running test_semantic_search_not_zero...
+✓ Semantic search working - top semantic score: 0.966
+
+Running test_special_characters_query...
+✓ Special character queries handled
+
+Running test_tech_filter...
+✓ Tech filter working - 5 Django results
+
+Running test_top_k_limit...
+✓ top_k parameter working correctly
+
+======================================================================
+TEST SUMMARY
+======================================================================
+Total tests:  19
+Passed:       19 (100.0%)
+Failed:       0
+
+
+======================================================================
+RUNNING: Score Accuracy Tests
+======================================================================
+
+======================================================================
+SCORE ACCURACY TESTS
+======================================================================
+
+Validating search score accuracy and thresholds...
+
+
+======================================================================
+EXACT MATCH SCORE TESTS
+======================================================================
+
+✅ Exact class name match
+   Query: 'ForeignKey'
+   BM25: 0.973 (min: 0.6)
+   Hybrid: 1.133 (min: 0.5)
+
+✅ Exact DRF class name
+   Query: 'ModelSerializer'
+   BM25: 0.743 (min: 0.6)
+   Hybrid: 0.921 (min: 0.5)
+
+✅ Exact psycopg class name
+   Query: 'AsyncConnection'
+   BM25: 1.000 (min: 0.5)
+   Hybrid: 1.050 (min: 0.5)
+
+======================================================================
+SEMANTIC SIMILARITY SCORE TESTS
+======================================================================
+
+✅ Natural language auth query
+   Query: 'How to authenticate users in Django...'
+   Semantic: 0.968 (min: 0.7)
+   Hybrid: 1.348 (min: 0.6)
+
+✅ Natural language serialization query
+   Query: 'What is the best way to serialize data in REST API...'
+   Semantic: 0.935 (min: 0.6)
+   Hybrid: 0.907 (min: 0.5)
+
+✅ Natural language connection query
+   Query: 'How to manage database connections efficiently...'
+   Semantic: 0.980 (min: 0.6)
+   Hybrid: 0.917 (min: 0.5)
+
+======================================================================
+HYBRID BALANCE TESTS
+======================================================================
+
+✅ Mixed keyword and semantic query
+   BM25: 1.000
+   Semantic: 1.000
+   Hybrid: 1.050 (base: 1.000)
+
+✅ DRF mixed query
+   BM25: 0.827
+   Semantic: 1.000
+   Hybrid: 0.977 (base: 0.931)
+
+✅ Psycopg mixed query
+   BM25: 0.623
+   Semantic: 0.952
+   Hybrid: 0.861 (base: 0.820)
+
+======================================================================
+SCORE CONSISTENCY TESTS
+======================================================================
+
+✅ Django models
+   Scores: 0.7200 vs 0.7200
+   Difference: 0.000000
+
+✅ DRF serializers
+   Scores: 1.0007 vs 1.0007
+   Difference: 0.000000
+
+✅ psycopg connection
+   Scores: 1.0443 vs 1.0443
+   Difference: 0.000000
+
+======================================================================
+SCORE ORDERING TESTS
+======================================================================
+
+✅ Relevant vs irrelevant query scores
+   Relevant: 1.274
+   Irrelevant: 0.860
+   Difference: +0.414
+
+======================================================================
+SCORE ACCURACY TEST SUMMARY
+======================================================================
+
+Total tests:  13
+Passed:       13 (100.0%)
+Failed:       0
+
+📊 Detailed results saved to: /home/mathur/projects/docs-mcp-server/tests/score_accuracy_results.json
+
+
+======================================================================
+RUNNING: Integration Tests
+======================================================================
+
+======================================================================
+INTEGRATION TESTS
+======================================================================
+
+Testing complete workflows and integrations...
+
+
+======================================================================
+FULL INDEXING FLOW TEST
+======================================================================
+
+📊 Index stats before: 29026 chunks
+
+📚 Re-indexing: docs/django-6.0/faq
+   Files processed: 0
+   Chunks created: 0
+
+📊 Index stats after: 29026 chunks
+
+======================================================================
+CROSS-TECH WORKFLOW TEST
+======================================================================
+
+🔍 Query: 'authentication'
+   Found techs: drf, django
+   Expected techs: django, drf
+   ✅ Found expected technologies
+
+🔍 Query: 'connection'
+   Found techs: psycopg, django
+   Expected techs: django, psycopg
+   ✅ Found expected technologies
+
+🔍 Query: 'serializer'
+   Found techs: drf, django
+   Expected techs: drf
+   ✅ Found expected technologies
+
+======================================================================
+FILTER COMBINATION TEST
+======================================================================
+
+🔍 Tech filter only
+   Query: 'models'
+   Results: 5
+   ✅ Filters working correctly
+
+🔍 Tech + component filter
+   Query: 'authentication'
+   Results: 5
+   ⚠️  2 results don't match component filter
+   ✅ Filters working correctly
+
+🔍 No filters
+   Query: 'serializer'
+   Results: 5
+   ✅ Filters working correctly
+
+======================================================================
+SEARCH -> RETRIEVE WORKFLOW TEST
+======================================================================
+
+🔍 Searching for 'Django models'...
+   Found 3 results
+
+   Retrieving chunk 1: docs_django-6_0_topics_db_models_md_114_433f047ff7c8
+      ✅ Retrieved: Models
+
+   Retrieving chunk 2: docs_django-6_0_topics_db_queries_md_6_c406774da0a8
+      ✅ Retrieved: Making queries
+
+   Retrieving chunk 3: docs_django-6_0_topics_db_queries_md_23_12fe911b4cca
+      ✅ Retrieved: Making queries
+
+======================================================================
+TECH-SPECIFIC CLEAR TEST
+======================================================================
+
+📊 Technologies before: drf, psycopg, django
+
+⚠️  Skipping actual clear to preserve test data
+   (clear_tech method tested in unit tests)
+
+======================================================================
+CONCURRENT SEARCH TEST
+======================================================================
+
+🔍 Running 5 concurrent searches...
+
+   Results: [5, 5, 5, 5, 5]
+   ✅ All concurrent searches succeeded
+
+======================================================================
+EDGE CASE QUERIES TEST
+======================================================================
+
+   Testing: Empty query
+      ✅ Handled gracefully (5 results)
+
+   Testing: Whitespace only
+      ✅ Handled gracefully (5 results)
+
+   Testing: Single character
+      ✅ Handled gracefully (5 results)
+
+   Testing: Very long query
+      ✅ Handled gracefully (5 results)
+
+   Testing: Apostrophe
+      ✅ Handled gracefully (5 results)
+
+   Testing: Special character
+      ✅ Handled gracefully (5 results)
+
+   Testing: Comparison
+      ✅ Handled gracefully (5 results)
+
+======================================================================
+INTEGRATION TEST SUMMARY
+======================================================================
+
+Total tests:  11
+Passed:       10 (90.9%)
+Failed:       1
+
+FAILED TESTS:
+  ❌ full_indexing_flow
+     {'files_processed': 0, 'files_skipped': 9, 'files_updated': 0, 'chunks_created': 0, 'chunks_removed': 0, 'errors': 0}
+
+
+======================================================================
+RUNNING: Query Accuracy Tests (40+ queries)
+======================================================================
+
+======================================================================
+MCP SERVER ACCURACY TESTS
+======================================================================
+
+Loaded 48 test cases
+
+[1/48] Testing: Django ORM transactions and atomic operations...
+  ✅ PASS - Top result: Database transactions
+           Score: 1.237
+
+[2/48] Testing: How to define Django model relationships and foreign keys...
+  ✅ PASS - Top result: Models
+           Score: 1.088
+
+[3/48] Testing: Django queryset filter and exclude methods...
+  ✅ PASS - Top result: Managers
+           Score: 1.151
+
+[4/48] Testing: Django model field types and options...
+  ❌ FAIL
+           - Missing expected keywords in top 5: IntegerField
+
+[5/48] Testing: Django migrations create and apply...
+  ✅ PASS - Top result: Writing your first Django app, part 2
+           Score: 1.276
+
+[6/48] Testing: Django authentication middleware and login...
+  ✅ PASS - Top result: Using the Django authentication system
+           Score: 1.152
+
+[7/48] Testing: Django user permissions and authorization...
+  ✅ PASS - Top result: Customizing authentication in Django
+           Score: 1.247
+
+[8/48] Testing: Django password hashing and validation...
+  ✅ PASS - Top result: Writing and running tests
+           Score: 1.157
+
+[9/48] Testing: Django session management and cookies...
+  ✅ PASS - Top result: How to use sessions
+           Score: 1.462
+
+[10/48] Testing: Django custom user model creation...
+  ✅ PASS - Top result: Customizing authentication in Django
+           Score: 1.201
+
+[11/48] Testing: DRF serializer validation and custom validators...
+  ✅ PASS - Top result: Validators
+           Score: 1.155
+
+[12/48] Testing: DRF ModelSerializer fields and relations...
+  ✅ PASS - Top result: Serializers
+           Score: 1.043
+
+[13/48] Testing: DRF nested serializers and writable nested representations...
+  ✅ PASS - Top result: Writable nested serializers
+           Score: 1.088
+
+[14/48] Testing: DRF serializer read_only and write_only fields...
+  ❌ FAIL
+           - Missing expected keywords in top 5: write_only
+
+[15/48] Testing: DRF serializer context and instance...
+  ✅ PASS - Top result: HTML & Forms
+           Score: 1.091
+
+[16/48] Testing: DRF ViewSet and Router configuration...
+  ✅ PASS - Top result: Routers
+           Score: 1.019
+
+[17/48] Testing: DRF permission classes and authentication...
+  ✅ PASS - Top result: Authentication
+           Score: 0.977
+
+[18/48] Testing: DRF pagination classes and settings...
+  ❌ FAIL
+           - Missing expected keywords in top 5: limit
+
+[19/48] Testing: DRF filtering and search backends...
+  ❌ FAIL
+           - Missing expected keywords in top 5: backend
+
+[20/48] Testing: DRF action decorator and custom endpoints...
+  ✅ PASS - Top result: Tutorial 6: ViewSets & Routers
+           Score: 1.049
+
+[21/48] Testing: psycopg connection parameters and DSN...
+  ✅ PASS - Top result: `_dns` – DNS resolution utilities
+           Score: 1.026
+
+[22/48] Testing: psycopg connection pool configuration...
+  ✅ PASS - Top result: `psycopg_pool` – Connection pool implementations
+           Score: 1.118
+
+[23/48] Testing: psycopg transaction management and commit...
+  ✅ PASS - Top result: Transactions management
+           Score: 0.883
+
+[24/48] Testing: psycopg cursor types and usage...
+  ✅ PASS - Top result: `types` – Types information and adapters
+           Score: 1.080
+
+[25/48] Testing: psycopg connection context manager...
+  ✅ PASS - Top result: Basic module usage
+           Score: 1.050
+
+[26/48] Testing: psycopg async connection and await...
+  ✅ PASS - Top result: `psycopg` release notes
+           Score: 0.931
+
+[27/48] Testing: psycopg AsyncConnection and AsyncCursor...
+  ✅ PASS - Top result: Concurrent operations
+           Score: 1.040
+
+[28/48] Testing: psycopg async pool usage...
+  ✅ PASS - Top result: `psycopg_pool` release notes
+           Score: 1.023
+
+[29/48] Testing: psycopg server-side cursors...
+  ✅ PASS - Top result: `psycopg` release notes
+           Score: 1.132
+
+[30/48] Testing: psycopg copy operations and bulk insert...
+  ✅ PASS - Top result: Using COPY TO and COPY FROM
+           Score: 1.188
+
+[31/48] Testing: database connection pooling best practices...
+  ✅ PASS - Top result: Databases
+           Score: 0.958
+
+[32/48] Testing: REST API authentication methods...
+  ✅ PASS - Top result: Authentication
+           Score: 1.083
+
+[33/48] Testing: ORM query optimization techniques...
+  ✅ PASS - Top result: Database access optimization
+           Score: 1.179
+
+[34/48] Testing: middleware execution order...
+  ✅ PASS - Top result: Middleware
+           Score: 1.133
+
+[35/48] Testing: serialization and data validation...
+  ✅ PASS - Top result: Tutorial 1: Serialization
+           Score: 1.121
+
+[36/48] Testing: get_or_create...
+  ✅ PASS - Top result: `QuerySet` API reference
+           Score: 0.959
+
+[37/48] Testing: CharField max_length...
+  ✅ PASS - Top result: Creating forms from models
+           Score: 1.185
+
+[38/48] Testing: APIView vs ViewSet...
+  ✅ PASS - Top result: Parsers
+           Score: 1.039
+
+[39/48] Testing: execute vs executemany...
+  ✅ PASS - Top result: Basic module usage
+           Score: 1.020
+
+[40/48] Testing: what is select_related...
+  ✅ PASS - Top result: Django 1.7 release notes
+           Score: 0.995
+
+[41/48] Testing: middleware...
+  ✅ PASS - Top result: Translation
+           Score: 1.049
+
+[42/48] Testing: How to optimize database queries for performance...
+  ✅ PASS - Top result: Database access optimization
+           Score: 1.045
+
+[43/48] Testing: async await...
+  ✅ PASS - Top result: Signals
+           Score: 1.007
+
+[44/48] Testing: permission_classes...
+  ✅ PASS - Top result: Quickstart
+           Score: 1.008
+
+[45/48] Testing: How do I handle errors and exceptions...
+  ✅ PASS - Top result: `errors` – Package exceptions
+           Score: 1.099
+
+[46/48] Testing: transaction commit rollback database...
+  ✅ PASS - Top result: Database transactions
+           Score: 1.024
+
+[47/48] Testing: best practices for securing API endpoints...
+  ✅ PASS - Top result: Authentication
+           Score: 0.913
+
+[48/48] Testing: performance optimization tips...
+  ✅ PASS - Top result: Using Django
+           Score: 1.189
+
+======================================================================
+TEST SUMMARY
+======================================================================
+Total tests:  48
+Passed:       44 (91.7%)
+Failed:       4
+
+FAILED TESTS:
+
+❌ Django model field types and options
+   - Missing expected keywords in top 5: IntegerField
+
+❌ DRF serializer read_only and write_only fields
+   - Missing expected keywords in top 5: write_only
+
+❌ DRF pagination classes and settings
+   - Missing expected keywords in top 5: limit
+
+❌ DRF filtering and search backends
+   - Missing expected keywords in top 5: backend
+
+
+======================================================================
+COMPREHENSIVE TEST SUMMARY
+======================================================================
+
+Test Suites Run: 4
+Passed: 2
+Failed: 2
+
+Detailed Results:
+  ✅ PASS - Core Functionality Tests
+  ✅ PASS - Score Accuracy Tests
+  ❌ FAIL - Integration Tests
+  ❌ FAIL - Query Accuracy Tests (40+ queries)
+
+⚠️  2 TEST SUITE(S) FAILED
+
+📊 Results saved to: /home/mathur/projects/docs-mcp-server/tests/comprehensive_test_results.json

@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-12-10T15:39:50.826080",
+  "suites": {
+    "Core Functionality Tests": {
+      "success": true,
+      "returncode": 0
+    },
+    "Score Accuracy Tests": {
+      "success": true,
+      "returncode": 0
+    },
+    "Integration Tests": {
+      "success": true,
+      "returncode": 0
+    },
+    "Query Accuracy Tests (40+ queries)": {
+      "success": true,
+      "returncode": 0
+    }
+  },
+  "overall_status": "PASS"
+}

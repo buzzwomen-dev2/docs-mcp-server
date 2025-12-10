@@ -1,0 +1,187 @@
+{
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "results": [
+    {
+      "test": "exact_match",
+      "query": "ForeignKey",
+      "description": "Exact class name match",
+      "passed": true,
+      "details": {
+        "top_result": "Making queries",
+        "bm25_score": 0.9733864176538329,
+        "semantic_score": 0.924128040298756,
+        "hybrid_score": 1.1325976694889441,
+        "min_bm25_required": 0.6,
+        "min_hybrid_required": 0.5
+      }
+    },
+    {
+      "test": "exact_match",
+      "query": "ModelSerializer",
+      "description": "Exact DRF class name",
+      "passed": true,
+      "details": {
+        "top_result": "Serializers",
+        "bm25_score": 0.7429828182834298,
+        "semantic_score": 0.9668300442585175,
+        "hybrid_score": 0.9211557115619066,
+        "min_bm25_required": 0.6,
+        "min_hybrid_required": 0.5
+      }
+    },
+    {
+      "test": "exact_match",
+      "query": "AsyncConnection",
+      "description": "Exact psycopg class name",
+      "passed": true,
+      "details": {
+        "top_result": "Connection classes",
+        "bm25_score": 1.0,
+        "semantic_score": 1.0,
+        "hybrid_score": 1.05,
+        "min_bm25_required": 0.5,
+        "min_hybrid_required": 0.5
+      }
+    },
+    {
+      "test": "semantic_similarity",
+      "query": "How to authenticate users in Django",
+      "description": "Natural language auth query",
+      "passed": true,
+      "details": {
+        "top_result": "How to authenticate using `REMOTE_USER`",
+        "bm25_score": 0.999581445555342,
+        "semantic_score": 0.9675066267469575,
+        "hybrid_score": 1.347962762121678,
+        "min_semantic_required": 0.7,
+        "min_hybrid_required": 0.6
+      }
+    },
+    {
+      "test": "semantic_similarity",
+      "query": "What is the best way to serialize data in REST API",
+      "description": "Natural language serialization query",
+      "passed": true,
+      "details": {
+        "top_result": "Responses",
+        "bm25_score": 0.7580185234660255,
+        "semantic_score": 0.9348430412489079,
+        "hybrid_score": 0.9073188958425427,
+        "min_semantic_required": 0.6,
+        "min_hybrid_required": 0.5
+      }
+    },
+    {
+      "test": "semantic_similarity",
+      "query": "How to manage database connections efficiently",
+      "description": "Natural language connection query",
+      "passed": true,
+      "details": {
+        "top_result": "Concurrent operations",
+        "bm25_score": 0.7126324058569695,
+        "semantic_score": 0.980345086800598,
+        "hybrid_score": 0.916923015144304,
+        "min_semantic_required": 0.6,
+        "min_hybrid_required": 0.5
+      }
+    },
+    {
+      "test": "hybrid_balance",
+      "query": "Django ORM query optimization",
+      "description": "Mixed keyword and semantic query",
+      "passed": true,
+      "details": {
+        "top_result": "Django 1.1 release notes",
+        "bm25_score": 1.0,
+        "semantic_score": 1.0,
+        "hybrid_score": 1.05,
+        "base_hybrid": 1.0,
+        "hybrid_reasonable": true,
+        "both_contribute": true
+      }
+    },
+    {
+      "test": "hybrid_balance",
+      "query": "DRF viewset permissions configuration",
+      "description": "DRF mixed query",
+      "passed": true,
+      "details": {
+        "top_result": "ViewSets",
+        "bm25_score": 0.8269197392570556,
+        "semantic_score": 1.0,
+        "hybrid_score": 0.9773062904879634,
+        "base_hybrid": 0.9307678957028223,
+        "hybrid_reasonable": true,
+        "both_contribute": true
+      }
+    },
+    {
+      "test": "hybrid_balance",
+      "query": "psycopg async connection pooling",
+      "description": "Psycopg mixed query",
+      "passed": true,
+      "details": {
+        "top_result": "`psycopg_pool` release notes",
+        "bm25_score": 0.6229167109127303,
+        "semantic_score": 0.9516310308720557,
+        "hybrid_score": 0.8611525680327419,
+        "base_hybrid": 0.8201453028883255,
+        "hybrid_reasonable": true,
+        "both_contribute": true
+      }
+    },
+    {
+      "test": "score_consistency",
+      "query": "Django models",
+      "description": "Consistency for 'Django models'",
+      "passed": true,
+      "details": {
+        "run1_score": 0.72,
+        "run2_score": 0.72,
+        "difference": 0.0,
+        "consistent": true
+      }
+    },
+    {
+      "test": "score_consistency",
+      "query": "DRF serializers",
+      "description": "Consistency for 'DRF serializers'",
+      "passed": true,
+      "details": {
+        "run1_score": 1.0006841248661102,
+        "run2_score": 1.0006841248661102,
+        "difference": 0.0,
+        "consistent": true
+      }
+    },
+    {
+      "test": "score_consistency",
+      "query": "psycopg connection",
+      "description": "Consistency for 'psycopg connection'",
+      "passed": true,
+      "details": {
+        "run1_score": 1.044298986429498,
+        "run2_score": 1.044298986429498,
+        "difference": 0.0,
+        "consistent": true
+      }
+    },
+    {
+      "test": "score_ordering",
+      "description": "Relevant vs irrelevant query scores",
+      "passed": true,
+      "details": {
+        "relevant_query": "Django authentication middleware",
+        "irrelevant_query": "random unrelated words xyz",
+        "relevant_score": 1.2743721483097776,
+        "irrelevant_score": 0.8604003167911153,
+        "difference": 0.41397183151866235
+      }
+    }
+  ]
+}

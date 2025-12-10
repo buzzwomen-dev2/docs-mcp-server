@@ -68,10 +68,10 @@ async def check_index_status():
         else:
             print(f"✅ Index loaded successfully")
             print(f"   Total chunks: {stats['total_chunks']}")
-            print(f"   Whoosh documents: {stats['whoosh_documents']}")
-            print(f"   Chroma documents: {stats['chroma_documents']}")
+            print(f"   Elasticsearch documents: {stats['whoosh_documents']}")
+            print(f"   Qdrant documents: {stats['chroma_documents']}")
             print(f"   Technologies: {', '.join(stats['technologies'])}")
-            print(f"   Embedding model: {stats['embedding_model']}-dimensional")
+            print(f"   Embedding dimension: {stats['embedding_model']}D (FastEmbed)")
             print(f"   Weights: BM25={stats['bm25_weight']}, Semantic={stats['semantic_weight']}")
             return True
             
@@ -135,7 +135,7 @@ async def test_index_manager_initialization():
         manager = IndexManager()
         print("✅ IndexManager initialized successfully")
         print(f"   Index directory: {manager.index_dir}")
-        print(f"   Embedding model: sentence-transformers model")
+        print(f"   Embedding model: FastEmbed ({manager.embedding_dimension}D)")
         print(f"   BM25 weight: {manager.bm25_weight}")
         print(f"   Semantic weight: {manager.semantic_weight}")
         return True

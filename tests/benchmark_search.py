@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 from statistics import mean, median, stdev
-from typing import List
+from typing import List, Optional
 import argparse
 import json
 
@@ -24,7 +24,7 @@ class SearchBenchmark:
     """Benchmark search engine performance."""
     
     def __init__(self):
-        self.manager = None
+        self.manager: Optional[IndexManager] = None
         self.init_time = 0.0
         self.query_times: List[float] = []
     
@@ -39,10 +39,13 @@ class SearchBenchmark:
     async def benchmark_single_query(
         self,
         query: str,
-        tech: str = None,
+        tech: Optional[str] = None,
         top_k: int = 10
     ) -> dict:
         """Benchmark a single query and return timing info."""
+        if self.manager is None:
+            raise RuntimeError("SearchBenchmark not initialized. Call initialize() first.")
+        
         start = time.time()
         results = await self.manager.search(
             query=query,
@@ -62,7 +65,7 @@ class SearchBenchmark:
         self,
         queries: List[str],
         warmup_queries: int = 3,
-        tech_filter: str = None
+        tech_filter: Optional[str] = None
     ) -> dict:
         """Run benchmark with multiple queries."""
         print("=" * 70)

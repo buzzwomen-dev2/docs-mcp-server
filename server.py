@@ -2,13 +2,20 @@
 """
 Hybrid Search MCP Documentation Server for Django/DRF/Psycopg stack.
 
-Combines semantic search (sentence-transformers + ChromaDB) with
-keyword search (Whoosh BM25) for optimal retrieval of technical documentation.
+Combines semantic search (FastEmbed + Qdrant) with keyword search (Elasticsearch BM25)
+for optimal retrieval of technical documentation.
+
+Architecture:
+- Elasticsearch 8.x: BM25 keyword search with inverted index
+- Qdrant: Vector similarity search with HNSW index
+- FastEmbed: Fast CPU-based embeddings (BAAI/bge-small-en-v1.5)
+- Hybrid scoring: 0.4 BM25 + 0.6 semantic (configurable)
 """
 
 import asyncio
 import logging
 import os
+import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -33,19 +40,50 @@ logger = logging.getLogger(__name__)
 # Configuration from environment
 DOCS_ROOT = Path("docs")
 INDEX_DIR = os.getenv("INDEX_DIR", ".index")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en")
-BM25_WEIGHT = float(os.getenv("BM25_WEIGHT", "0.6"))
-SEMANTIC_WEIGHT = float(os.getenv("SEMANTIC_WEIGHT", "0.4"))
-CHUNK_SIZE_TOKENS = int(os.getenv("CHUNK_SIZE_TOKENS", "400"))
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+
+# Elasticsearch config
+ES_HOST = os.getenv("ES_HOST", "http://localhost:9200")
+ES_INDEX_NAME = os.getenv("ES_INDEX_NAME", "docs_index")
+
+# Qdrant config
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "docs_collection")
+
+# Redis config (prepared but not used yet)
+REDIS_HOST = os.getenv("REDIS_HOST", None)
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+REDIS_ENABLED = os.getenv("REDIS_ENABLED", "false").lower() == "true"
+
+# Validate numeric environment variables
+try:
+    BM25_WEIGHT = float(os.getenv("BM25_WEIGHT", "0.4"))
+    SEMANTIC_WEIGHT = float(os.getenv("SEMANTIC_WEIGHT", "0.6"))
+    CHUNK_SIZE_TOKENS = int(os.getenv("CHUNK_SIZE_TOKENS", "100"))
+    
+    # Validate ranges
+    if not (0 <= BM25_WEIGHT <= 1 and 0 <= SEMANTIC_WEIGHT <= 1):
+        raise ValueError(f"Weights must be between 0 and 1")
+    if abs((BM25_WEIGHT + SEMANTIC_WEIGHT) - 1.0) > 0.01:
+        raise ValueError(f"Weights must sum to 1.0")
+    if CHUNK_SIZE_TOKENS < 10 or CHUNK_SIZE_TOKENS > 1000:
+        raise ValueError(f"CHUNK_SIZE_TOKENS must be between 10 and 1000")
+except (ValueError, TypeError) as e:
+    logger.error(f"Invalid configuration: {e}")
+    raise
 
 TECH_DIRS = {
     "django": "django-6.0",
-    "drf": "drf-3.16.1", 
+    "drf": "drf-3.16.1",
     "psycopg": "psycopg-3.3.1"
 }
 
+# Validate docs directory exists
+if not DOCS_ROOT.exists():
+    logger.warning(f"Documentation directory not found: {DOCS_ROOT}. Index will be empty until docs are added.")
 
-# Pydantic models for structured output
+# Pydantic models (unchanged)
 class SearchResultModel(BaseModel):
     """Structured search result."""
     chunk_id: str = Field(description="Unique chunk identifier")
@@ -61,12 +99,11 @@ class SearchResultModel(BaseModel):
     semantic_score: float = Field(description="Semantic similarity score (0-1)")
     hybrid_score: float = Field(description="Combined hybrid score (0-1)")
 
-
 class IndexStats(BaseModel):
     """Index statistics and health information."""
     total_chunks: int
-    whoosh_documents: int
-    chroma_documents: int
+    whoosh_documents: int  # Actually Elasticsearch count
+    chroma_documents: int  # Actually Qdrant count
     embedding_model: int
     embedding_dimension: int
     bm25_weight: float
@@ -74,7 +111,6 @@ class IndexStats(BaseModel):
     index_directory: str
     technologies: List[str]
     file_types: List[str]
-
 
 class SourceInfo(BaseModel):
     """Information about an indexed source file."""
@@ -85,28 +121,34 @@ class SourceInfo(BaseModel):
     version: str
     file_type: str
 
-
 @dataclass
 class AppContext:
     """Application context with IndexManager."""
     index_manager: IndexManager
 
-
 @asynccontextmanager
 async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     """Manage application lifecycle with IndexManager initialization."""
-    logger.info("Initializing IndexManager...")
+    logger.info("Initializing IndexManager with Elasticsearch + Qdrant + FastEmbed...")
     
     index_manager = IndexManager(
         index_dir=INDEX_DIR,
         embedding_model=EMBEDDING_MODEL,
         bm25_weight=BM25_WEIGHT,
         semantic_weight=SEMANTIC_WEIGHT,
-        chunk_size_tokens=CHUNK_SIZE_TOKENS
+        chunk_size_tokens=CHUNK_SIZE_TOKENS,
+        es_host=ES_HOST,
+        es_index_name=ES_INDEX_NAME,
+        qdrant_host=QDRANT_HOST,
+        qdrant_port=QDRANT_PORT,
+        qdrant_collection=QDRANT_COLLECTION,
+        redis_host=REDIS_HOST,
+        redis_port=REDIS_PORT,
+        redis_enabled=REDIS_ENABLED
     )
     
-    # Check if index exists and has content
-    stats = index_manager.get_stats()
+    # Check if index exists
+    stats = await index_manager.get_stats()
     if stats["total_chunks"] == 0:
         logger.warning("Index is empty. Use reindex_docs tool to build the index.")
     else:
@@ -116,55 +158,43 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
     
     logger.info("Shutting down IndexManager...")
 
-
-# Initialize FastMCP server with lifespan
-# Server name uses camelCase per VS Code MCP naming conventions
+# Initialize FastMCP server
 mcp = FastMCP("docsSearch", lifespan=app_lifespan)
 
 # ==================== HYBRID SEARCH TOOLS ====================
+# (All tools remain the same—they work with the IndexManager interface)
 
 def expand_query(query: str) -> str:
-    """
-    Expand comparison queries to improve search results.
+    """Expand comparison queries to improve search results."""
+    comparative_keywords = "advantage disadvantage better prefer choose comparison"
     
-    Transforms 'X vs Y' queries into OR queries that search for both terms.
-    Also handles 'versus', 'compared to', 'difference between' patterns.
-    
-    Examples:
-        'Serializer vs ModelSerializer' -> 'Serializer OR ModelSerializer'
-        'difference between X and Y' -> 'X OR Y'
-    """
-    import re
-    
-    # Pattern 1: "X vs Y" or "X versus Y"
     vs_pattern = r'(.+?)\s+(?:vs\.?|versus)\s+(.+?)(?:\s+|$)'
     match = re.search(vs_pattern, query, re.IGNORECASE)
     if match:
         term1 = match.group(1).strip()
         term2 = match.group(2).strip()
-        # Remove trailing words like "difference", "when to use", etc.
         term2 = re.sub(r'\s+(difference|when|how|why).*$', '', term2, flags=re.IGNORECASE)
-        return f"{term1} OR {term2}"
+        return f"{term1} OR {term2} {comparative_keywords}"
     
-    # Pattern 2: "difference between X and Y"
     diff_pattern = r'difference\s+between\s+(.+?)\s+and\s+(.+?)(?:\s+|$)'
     match = re.search(diff_pattern, query, re.IGNORECASE)
     if match:
         term1 = match.group(1).strip()
         term2 = match.group(2).strip()
-        return f"{term1} OR {term2}"
+        return f"{term1} OR {term2} {comparative_keywords}"
     
-    # Pattern 3: "compared to" or "comparison"
     comp_pattern = r'(.+?)\s+compared\s+to\s+(.+?)(?:\s+|$)'
     match = re.search(comp_pattern, query, re.IGNORECASE)
     if match:
         term1 = match.group(1).strip()
         term2 = match.group(2).strip()
-        return f"{term1} OR {term2}"
+        return f"{term1} OR {term2} {comparative_keywords}"
     
-    # No pattern matched, return original query
+    choice_pattern = r'(should\s+(?:I|we)\s+use|when\s+to\s+use|which\s+(?:to\s+)?(?:use|choose))'
+    if re.search(choice_pattern, query, re.IGNORECASE):
+        return f"{query} {comparative_keywords}"
+    
     return query
-
 
 @mcp.tool()
 async def search(
@@ -177,19 +207,8 @@ async def search(
     """
     Search documentation using hybrid semantic + keyword search.
     
-    Combines BM25 keyword matching with semantic embeddings for optimal results.
-    Returns ranked results with individual and hybrid scores.
-    
-    Args:
-        query: Search query text
-        tech: Filter by technology (django/drf/psycopg)
-        component: Filter by component/module
-        top_k: Number of results to return (default 10)
-    
-    Returns:
-        List of search results with scores and metadata
+    Combines Elasticsearch BM25 with Qdrant semantic embeddings for optimal results.
     """
-    # Expand comparison queries for better results
     expanded_query = expand_query(query)
     if expanded_query != query:
         await ctx.info(f"Query expanded: '{query}' -> '{expanded_query}'")
@@ -342,7 +361,7 @@ async def get_index_stats(
     """
     index_manager = ctx.request_context.lifespan_context.index_manager
     
-    stats = index_manager.get_stats()
+    stats = await index_manager.get_stats()
     
     return IndexStats(**stats)
 
@@ -613,7 +632,7 @@ async def http_retrieve(chunk_id: str):
 async def http_status():
     """HTTP endpoint for index statistics."""
     index_manager = get_http_index_manager()
-    stats = index_manager.get_stats()
+    stats = await index_manager.get_stats()
     return IndexStats(**stats)
 
 
