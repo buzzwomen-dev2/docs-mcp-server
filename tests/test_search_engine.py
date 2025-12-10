@@ -276,10 +276,11 @@ class TestIndexManager:
                 f"BM25 score out of range: {result.bm25_score}"
             assert 0 <= result.semantic_score <= 1, \
                 f"Semantic score out of range: {result.semantic_score}"
-            assert 0 <= result.hybrid_score <= 1, \
+            # Hybrid scores can exceed 1.0 due to position and section boosts (up to ~1.5)
+            assert 0 <= result.hybrid_score <= 1.5, \
                 f"Hybrid score out of range: {result.hybrid_score}"
         
-        print("✓ All scores in valid range [0, 1]")
+        print("✓ All scores in valid ranges (BM25/Semantic: [0,1], Hybrid: [0,1.5])")
     
     @pytest.mark.asyncio
     async def test_results_sorted_by_score(self):

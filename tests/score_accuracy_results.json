@@ -27,9 +27,9 @@
       "passed": true,
       "details": {
         "top_result": "Serializers",
-        "bm25_score": 0.7429828182834298,
-        "semantic_score": 0.9668300442585175,
-        "hybrid_score": 0.9211557115619066,
+        "bm25_score": 1.0,
+        "semantic_score": 0.9658364078487307,
+        "hybrid_score": 1.0284769369447004,
         "min_bm25_required": 0.6,
         "min_hybrid_required": 0.5
       }
@@ -68,10 +68,10 @@
       "description": "Natural language serialization query",
       "passed": true,
       "details": {
-        "top_result": "Responses",
-        "bm25_score": 0.7580185234660255,
-        "semantic_score": 0.9348430412489079,
-        "hybrid_score": 0.9073188958425427,
+        "top_result": "REST, Hypermedia & HATEOAS",
+        "bm25_score": 0.8703281959658028,
+        "semantic_score": 0.9002737791162143,
+        "hybrid_score": 1.0659546550272596,
         "min_semantic_required": 0.6,
         "min_hybrid_required": 0.5
       }
@@ -126,11 +126,11 @@
       "description": "Psycopg mixed query",
       "passed": true,
       "details": {
-        "top_result": "`psycopg_pool` release notes",
-        "bm25_score": 0.6229167109127303,
-        "semantic_score": 0.9516310308720557,
-        "hybrid_score": 0.8611525680327419,
-        "base_hybrid": 0.8201453028883255,
+        "top_result": "`psycopg` release notes",
+        "bm25_score": 1.0,
+        "semantic_score": 0.8894797802776239,
+        "hybrid_score": 0.9803722615749031,
+        "base_hybrid": 0.9336878681665743,
         "hybrid_reasonable": true,
         "both_contribute": true
       }
@@ -141,8 +141,8 @@
       "description": "Consistency for 'Django models'",
       "passed": true,
       "details": {
-        "run1_score": 0.72,
-        "run2_score": 0.72,
+        "run1_score": 0.7994319919984417,
+        "run2_score": 0.7994319919984417,
         "difference": 0.0,
         "consistent": true
       }
@@ -179,8 +179,8 @@
         "relevant_query": "Django authentication middleware",
         "irrelevant_query": "random unrelated words xyz",
         "relevant_score": 1.2743721483097776,
-        "irrelevant_score": 0.8604003167911153,
-        "difference": 0.41397183151866235
+        "irrelevant_score": 0.8708137333036147,
+        "difference": 0.40355841500616296
       }
     }
   ]

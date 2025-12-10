@@ -27,27 +27,50 @@ async def test_semantic_scores():
         {
             "query": "Django context template rendering",
             "tech": "django",
-            "description": "Django conceptual query"
+            "description": "Django conceptual query",
+            "top_k": 5
         },
         {
             "query": "DRF serializer validation",
             "tech": "drf",
-            "description": "DRF conceptual query"
+            "description": "DRF conceptual query",
+            "top_k": 5
         },
         {
             "query": "psycopg async connection pool",
             "tech": "psycopg",
-            "description": "Psycopg conceptual query"
+            "description": "Psycopg conceptual query",
+            "top_k": 5
         },
         {
             "query": "authentication middleware permissions",
             "tech": None,
-            "description": "Cross-tech query"
+            "description": "Cross-tech query",
+            "top_k": 5
         },
         {
             "query": "How to pass data from view to template",
             "tech": "django",
-            "description": "Natural language query"
+            "description": "Natural language query",
+            "top_k": 5
+        },
+        {
+            "query": "Django templates render HttpResponse template views context",
+            "tech": "django",
+            "description": "Complex multi-keyword query",
+            "top_k": 10
+        },
+        {
+            "query": "serializer fields nested writable representation",
+            "tech": "drf",
+            "description": "DRF multi-keyword query",
+            "top_k": 10
+        },
+        {
+            "query": "connection pool async cursor execute batch",
+            "tech": "psycopg",
+            "description": "Psycopg multi-keyword query",
+            "top_k": 10
         },
     ]
     
@@ -65,7 +88,7 @@ async def test_semantic_scores():
         results = await manager.search(
             test["query"],
             tech_filter=test["tech"],
-            top_k=10
+            top_k=test["top_k"]
         )
         
         if not results:
@@ -90,21 +113,22 @@ async def test_semantic_scores():
             print(f"   {j}. {r.topic[:50]}")
             print(f"      BM25: {r.bm25_score:.4f} | Semantic: {r.semantic_score:.4f} | Hybrid: {r.hybrid_score:.4f}")
         
-        # Test criteria
+        # Test criteria - updated to expect 100% semantic coverage
         issues = []
         
-        # At least 50% should have semantic scores
-        if semantic_nonzero < len(results) * 0.5:
-            issues.append(f"Only {semantic_nonzero}/{len(results)} have semantic scores (< 50%)")
+        # ALL results should have semantic scores (100% coverage)
+        if semantic_nonzero < len(results):
+            missing = len(results) - semantic_nonzero
+            issues.append(f"{missing}/{len(results)} results have semantic_score = 0 (expected 100% coverage)")
         
         # Top result should have semantic score
         if results[0].semantic_score == 0:
             issues.append("Top result has semantic_score = 0")
         
-        # At least top 3 should have semantic scores
+        # All top 3 should have semantic scores
         top3_semantic = sum(1 for r in results[:3] if r.semantic_score > 0)
-        if top3_semantic < 2:
-            issues.append(f"Only {top3_semantic}/3 top results have semantic scores")
+        if top3_semantic < 3:
+            issues.append(f"Only {top3_semantic}/3 top results have semantic scores (expected 3/3)")
         
         # Both BM25 and semantic should contribute to top result
         top = results[0]

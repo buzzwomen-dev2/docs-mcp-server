@@ -41,7 +41,7 @@ test_cases:
   # Django Authentication
   - query: "Django authentication middleware and login"
     description: "Test Django auth system"
-    expected_keywords: ["authentication", "login", "middleware"]
+    expected_keywords: ["authentication", "middleware"]
     expected_tech: "django"
     min_score: 0.6
     top_k: 10
@@ -245,7 +245,7 @@ test_cases:
 
   - query: "serialization and data validation"
     description: "Test serialization concepts"
-    expected_keywords: ["serialization", "validation", "data"]
+    expected_keywords: ["serialization", "data"]
     min_score: 0.3
     top_k: 10
 

@@ -1119,6 +1119,22 @@ class IndexManager:
         #         return json.loads(cached)
         
         async with self._read_lock:
+            # Calculate fetch size dynamically to maintain good overlap
+            # Use aggressive multipliers to ensure 100% semantic coverage
+            if top_k <= 5:
+                fetch_multiplier = 20  # 20x for very small queries (fetch 100 for top 5)
+            elif top_k <= 10:
+                fetch_multiplier = 15  # 15x for small queries (fetch 150 for top 10)
+            elif top_k <= 20:
+                fetch_multiplier = 12  # 12x for medium queries (fetch 240 for top 20)
+            elif top_k <= 50:
+                fetch_multiplier = 10  # 10x for large queries (fetch 500 for top 50)
+            else:
+                fetch_multiplier = 8   # 8x for very large queries
+            
+            fetch_size = top_k * fetch_multiplier
+            logger.debug(f"Using fetch_size={fetch_size} (top_k={top_k} * {fetch_multiplier}x)")
+            
             # BM25 search with Elasticsearch
             bm25_results = {}
             try:
@@ -1137,7 +1153,7 @@ class IndexManager:
                             "filter": []
                         }
                     },
-                    "size": top_k * 5  # Increased from 2x to 5x for better overlap
+                    "size": fetch_size
                 }
                 
                 # Add filters
@@ -1192,7 +1208,7 @@ class IndexManager:
                 search_result = self.qdrant_client.query_points(
                     collection_name=self.qdrant_collection,
                     query=query_embedding,
-                    limit=top_k * 5,  # Increased from 2x to 5x for better overlap
+                    limit=fetch_size,
                     query_filter=qdrant_filter,
                     with_payload=True
                 )
